@@ -1,0 +1,14 @@
+# BACKEND
+back/alquiler-autos-backend/node_modules/
+back/alquiler-autos-backend/.env
+
+# FLUTTER
+flutter_application_2/build/
+flutter_application_2/.dart_tool/
+flutter_application_2/.idea/
+flutter_application_2/flutter_application_2.iml
+flutter_application_2/pubspec.lock
+
+# GENERAL
+.DS_Store
+.vscode/
