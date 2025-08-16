@@ -3,6 +3,7 @@ import 'package:flutter_application_2/views/loginScreen.dart';
 import 'package:flutter_application_2/views/menuPrincipal.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import '../api_config.dart';
 
 class RegistroUsuarios extends StatefulWidget {
   const RegistroUsuarios({super.key});
@@ -40,27 +41,18 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
     }
 
     try {
-      final url = Uri.parse('http://localhost:9000/api/auth/register');
+      final url = Uri.parse('${ApiConfig.baseUrl}/auth/register');
       final response = await http.post(
         url,
         headers: {'Content-Type': 'application/json'},
-        body: json.encode({
-          'name': nombre,
-          'email': correo,
-          'password': contrasena,
-        }),
+        body: jsonEncode({'name': nombre, 'email': correo, 'password': contrasena}),
       );
 
-      final data = json.decode(response.body);
+      final data = jsonDecode(response.body);
 
       if (response.statusCode == 201) {
-        // ✅ Registro exitoso → ir a MenuPrincipal
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => MenuPrincipal()),
-        );
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => MenuPrincipal()));
       } else {
-        // ❌ Registro fallido → mostrar error
         mostrarDialogo(data['message'] ?? 'Error al registrar.');
       }
     } catch (e) {
@@ -75,10 +67,7 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
         title: Text('Atención'),
         content: Text(mensaje),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text('OK'),
-          )
+          TextButton(onPressed: () => Navigator.pop(context), child: Text('OK')),
         ],
       ),
     );
@@ -95,17 +84,9 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
           children: [
             Icon(Icons.person_pin, size: 80, color: encabezado),
             SizedBox(height: 16),
-            Text(
-              "EMPESEMOS",
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: encabezado),
-            ),
+            Text("EMPECEMOS", textAlign: TextAlign.center, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: encabezado)),
             SizedBox(height: 8),
-            Text(
-              "Crea Una Nueva Cuenta ",
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 16, color: texto.withOpacity(0.7)),
-            ),
+            Text("Crea una nueva cuenta", textAlign: TextAlign.center, style: TextStyle(fontSize: 16, color: texto.withOpacity(0.7))),
             SizedBox(height: 90),
             TextField(
               controller: nombreController,
@@ -116,10 +97,7 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
                 labelText: "Nombre Completo",
                 labelStyle: TextStyle(color: texto),
                 prefixIcon: Icon(Icons.person, color: encabezado),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  borderSide: BorderSide.none,
-                ),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
               ),
             ),
             SizedBox(height: 16),
@@ -132,10 +110,7 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
                 labelText: "Correo Electrónico",
                 labelStyle: TextStyle(color: texto),
                 prefixIcon: Icon(Icons.email, color: encabezado),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  borderSide: BorderSide.none,
-                ),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
               ),
             ),
             SizedBox(height: 16),
@@ -149,10 +124,7 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
                 labelText: "Contraseña",
                 labelStyle: TextStyle(color: texto),
                 prefixIcon: Icon(Icons.password, color: encabezado),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  borderSide: BorderSide.none,
-                ),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
               ),
             ),
             SizedBox(height: 16),
@@ -166,23 +138,14 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
                 labelText: "Confirmar Contraseña",
                 labelStyle: TextStyle(color: texto),
                 prefixIcon: Icon(Icons.lock, color: encabezado),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  borderSide: BorderSide.none,
-                ),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
               ),
             ),
             SizedBox(height: 24),
             ElevatedButton(
               onPressed: registrarUsuario,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: boton,
-                minimumSize: Size(double.infinity, 48),
-              ),
-              child: Text(
-                "REGISTRAR",
-                style: TextStyle(fontSize: 16, color: Colors.white),
-              ),
+              style: ElevatedButton.styleFrom(backgroundColor: boton, minimumSize: Size(double.infinity, 48)),
+              child: Text("REGISTRAR", style: TextStyle(fontSize: 16, color: Colors.white)),
             ),
             SizedBox(height: 30),
             Row(
@@ -190,13 +153,8 @@ class _RegistroUsuariosState extends State<RegistroUsuarios> {
               children: [
                 Text("¿Ya tienes cuenta?", style: TextStyle(color: texto)),
                 TextButton(
-                  onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (_) => LoginScreen()));
-                  },
-                  child: Text(
-                    "Iniciar Sesión",
-                    style: TextStyle(color: encabezado, fontWeight: FontWeight.bold),
-                  ),
+                  onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => LoginScreen())),
+                  child: Text("Iniciar Sesión", style: TextStyle(color: encabezado, fontWeight: FontWeight.bold)),
                 ),
               ],
             ),

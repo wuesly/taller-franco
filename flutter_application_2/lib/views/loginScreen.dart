@@ -3,6 +3,7 @@ import 'package:flutter_application_2/views/menuPrincipal.dart';
 import 'package:flutter_application_2/views/registroUsuarios.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import '../api_config.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -12,20 +13,19 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final Color fondo = Color(0xFFAFDDFF);
-  final Color encabezado = Color(0xFF6DB5FF);
+  final Color fondo = Color.fromARGB(255, 66, 28, 84);
+  final Color encabezado = Color.fromARGB(255, 179, 151, 218);
   final Color campos = Color(0xFFFFECD8);
-  final Color boton = Color(0xFFFF914D);
+  final Color boton = Color.fromARGB(255, 54, 76, 109);
   final Color texto = Color(0xFF222222);
 
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-
   bool isLoading = false;
 
   Future<void> loginUser() async {
-    final String email = emailController.text.trim();
-    final String password = passwordController.text.trim();
+    final email = emailController.text.trim();
+    final password = passwordController.text.trim();
 
     if (email.isEmpty || password.isEmpty) {
       showMessage("Por favor completa todos los campos");
@@ -36,21 +36,20 @@ class _LoginScreenState extends State<LoginScreen> {
 
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.101.23:9000/api/auth/login'),
+        Uri.parse('${ApiConfig.baseUrl}/auth/login'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'email': email, 'password': password}),
       );
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        final String nombre = data['user']['name'];
-
+        final nombre = data['user']['name'];
         showMessage("¡Bienvenido $nombre!", success: true);
 
         Future.delayed(Duration(milliseconds: 500), () {
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => MenuPrincipal()),
+            MaterialPageRoute(builder: (_) => MenuPrincipal()),
           );
         });
       } else {
@@ -66,10 +65,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void showMessage(String message, {bool success = false}) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: success ? Colors.green : Colors.red,
-      ),
+      SnackBar(content: Text(message), backgroundColor: success ? Colors.green : Colors.red),
     );
   }
 
@@ -78,22 +74,14 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       backgroundColor: fondo,
       body: Padding(
-        padding: const EdgeInsets.all(20.0),
+        padding: const EdgeInsets.all(20),
         child: ListView(
           children: [
             Icon(Icons.person_pin, size: 80, color: encabezado),
             SizedBox(height: 16),
-            Text(
-              "Bienvenido",
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: encabezado),
-            ),
+            Text("Bienvenido", textAlign: TextAlign.center, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: encabezado)),
             SizedBox(height: 8),
-            Text(
-              "Inicia sesión para continuar",
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 16, color: texto.withOpacity(0.7)),
-            ),
+            Text("Inicia sesión para continuar", textAlign: TextAlign.center, style: TextStyle(fontSize: 16, color: texto.withOpacity(0.7))),
             SizedBox(height: 90),
             TextField(
               controller: emailController,
@@ -124,35 +112,17 @@ class _LoginScreenState extends State<LoginScreen> {
             SizedBox(height: 24),
             ElevatedButton(
               onPressed: isLoading ? null : loginUser,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: boton,
-                minimumSize: Size(double.infinity, 48),
-              ),
-              child: isLoading
-                  ? CircularProgressIndicator(color: Colors.white)
-                  : Text("Iniciar sesión", style: TextStyle(fontSize: 16, color: Colors.white)),
+              style: ElevatedButton.styleFrom(backgroundColor: boton, minimumSize: Size(double.infinity, 48)),
+              child: isLoading ? CircularProgressIndicator(color: Colors.white) : Text("Iniciar sesión", style: TextStyle(fontSize: 16, color: Colors.white)),
             ),
             SizedBox(height: 30),
             Wrap(
               alignment: WrapAlignment.center,
               spacing: 5,
               children: [
-                Text("¿Olvidaste tu contraseña?", style: TextStyle(color: texto)),
-                TextButton(
-                  onPressed: () {},
-                  child: Text("Recuperar", style: TextStyle(color: encabezado, fontWeight: FontWeight.bold)),
-                ),
-              ],
-            ),
-            Wrap(
-              alignment: WrapAlignment.center,
-              spacing: 5,
-              children: [
                 Text("¿No tienes cuenta?", style: TextStyle(color: texto)),
                 TextButton(
-                  onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => RegistroUsuarios()));
-                  },
+                  onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => RegistroUsuarios())),
                   child: Text("Regístrate", style: TextStyle(color: encabezado, fontWeight: FontWeight.bold)),
                 ),
               ],
